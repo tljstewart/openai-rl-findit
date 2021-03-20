@@ -41,7 +41,7 @@ class Environment:
         self.dissolved_o2_data[x][y][z] = do2_level
 
     def get_pollution(self, x, y, z):
-        print(x, y, z)
+        #print(x, y, z)
         return self.pollution_data[x][y][z]
 
     def get_do2(self, x, y, z):

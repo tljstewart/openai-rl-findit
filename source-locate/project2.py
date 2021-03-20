@@ -18,7 +18,7 @@ performance_measure = []
 # utility_measure = []
 
 
-# Generates "world" setting size in 2D, location of the source and "pollution" in each cell
+# Generates "world" setting size in 3D, location of the source and "pollution" in each cell
 # gradient/noise level of pollution smaller gradient -> more diffuse. More noise -> more stochastic
 def generate_environment(width: int, height: int, depth: int, source_x: int, source_y: int, source_z: int, grad=0.1, noise_amplitude=0.0):
     environment = Environment(width, height, depth, (source_x, source_y, source_z))
@@ -35,13 +35,18 @@ def generate_environment(width: int, height: int, depth: int, source_x: int, sou
                 # establishes difference in pollution level from cell to cell
                 distance_gradient = distance * grad
                 pollution_level = 1 - distance_gradient
-                print(pollution_level)
+                # print(pollution_level)
                 do2_level = 0 + .60 * distance_gradient
 
                 if pollution_level < 1:
                     # min prevents noise level from making pollution > 1. prevents multiple false sources
                     local_noise = min(noise_amplitude, distance_gradient)
                     noise_pollution = random.random() * local_noise
+                    final_pollution_level = max(0.0, pollution_level + noise_pollution)
+                    # print(final_pollution_level)
+                    environment.set_pollution(x, y, z, final_pollution_level)
+                    final_do2_level = min(1.0, do2_level)
+                    environment.set_do2(x, y, z, final_do2_level)
                 else:
                     noise_pollution = 0
                     # max prevents pollution level from generating negative values
@@ -115,8 +120,8 @@ def program(environment, agent):
 
 # env = generate_environment(20, 10, 0.35)
 # print(env)
-water = generate_environment(100, 100, 100, 100, 100, 100, 1/50, 0.0)
-bob = Agent(0, 0, 0, 100, 100, 100)
+water = generate_environment(10, 10, 10, 5, 5, 5, 1/10, 0.0)
+bob = Agent(1, 1, 1, 10, 10, 10)
 for run_index in range(1000):
     # log_name = current_time = time.strftime("%Y%m%d-%H%M%S", time.gmtime()) + '-' + str(run_index)
     # create_log(log_name)

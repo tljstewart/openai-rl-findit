@@ -2,7 +2,7 @@ import random
 import sys
 from environment import Environment
 from utils import debug_print
-
+import numpy as np
 REWARD = 100
 # Template for the agent containing agents x and y coordinate within the world.
 # Contains fnx initializing the location of the agent within the world
@@ -40,7 +40,9 @@ class Agent:
         self.previous_action = Agent.NONE
         # Initializes the previous_state to 0. keeps track of the status in the tile visited prior
         # location, pollution, DO2, reward
+        # Make Dict
         self.experiences = []
+        # Make 3D numpy array
         self.utility_table = [0] * space_width * space_height * space_depth
 
     def location_string(self):
@@ -395,6 +397,7 @@ class Agent:
           self.move_NEGZ()
 
         reward = self.reward(environment)
+        # Make experiences a dict with key being x, y, z
         self.experiences.append(
             (
                 (self.x, self.y, self.z),
