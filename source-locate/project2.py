@@ -97,7 +97,7 @@ def program(environment, agent):
     i = 0
 
     # sets "lifetime" of agent in world render environment
-    for i in range(1000):
+    for i in range(100):
         #environment.render_plt(agent)
 
         # outputs data as a comma separated array
@@ -115,6 +115,7 @@ def program(environment, agent):
         # print(initial_location, environment_status, location)
         # print(score)
         # -- End Step
+    environment.render_plt(agent)
     return compute_performance(cost), i
 
 
@@ -122,7 +123,7 @@ def program(environment, agent):
 # print(env)
 water = generate_environment(10, 10, 10, 5, 5, 5, 1/10, 0.0)
 bob = Agent(1, 1, 1, 10, 10, 10)
-for run_index in range(1000):
+for run_index in range(100):
     # log_name = current_time = time.strftime("%Y%m%d-%H%M%S", time.gmtime()) + '-' + str(run_index)
     # create_log(log_name)
 
@@ -132,6 +133,7 @@ for run_index in range(1000):
     print(run_index, total_step)
 
     performance_measure.append(perf_1)
+
     # prints to csv size, source location, distance, gradient, noise, steps and performance
     # file_print([50, 50, 25, 1/25, 0, total_step, perf_1])
 

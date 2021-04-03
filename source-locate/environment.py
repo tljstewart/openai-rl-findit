@@ -85,14 +85,19 @@ class Environment:
         ax.cla()
         color_map1 = plt.get_cmap('YlGnBu')
         color_map2 = plt.get_cmap('RdBu')
-        '''
-        x = self.pollution_data[:,,]
-        y = self.pollution_data[,:,]
-        z = self.pollution_data[,,:]
-        X, Y, Z = np.meshgrid(x, y, z, indexing = 'ij')
-        ax.plot_surface(X, Y, Z, cmap=cm.viridis,
+
+        x = np.arange(0, self.width)
+        #x = x.flatten()
+        y = np.arange(0, self.height)
+        #y = y.flatten()
+        z = self.pollution_data[:,2]
+        #z = z.flatten()
+        X, Y = np.meshgrid(x, y)
+        print(x)
+        print(y)
+        ax.plot_surface(X, Y, z, cmap=cm.viridis,
                            linewidth=0, antialiased=False)
-        '''
+
         #ax.matshow(self.dissolved_o2_data, cmap=color_map2, alpha=0.0)
         #ax.set_box_aspect((agent.x), (agent.y), (agent.z))
         ax.scatter3D(agent.x, agent.y, agent.z)
