@@ -6,7 +6,6 @@ import numpy as np
 
 fig = plt.figure()
 ax = fig.gca(projection='3d')
-axAgent = fig.gca(projection='3d')
 
 
 # template for 2D environment containing (width, height) and pollution data for each cell. As well as debugging render.
@@ -105,13 +104,14 @@ class Environment:
                     #fig.colorbar(scalarMap, ax=ax)
                     #todo:
                     # for an xyz color this point between [0 1] based on the normalzied self.pollution_data
+        plt.pause(0.00001)
 
     # visualizes agent in space in the Run window.
     def render_agent(self, agent):
-        axAgent.scatter3D(agent.x, agent.y, agent.z, color='black')
+        ax.scatter3D(agent.x, agent.y, agent.z, color='black')
         plt.pause(0.00001)
 
-        axAgent.cla()
+        #ax.cla()
         # color_map1 = plt.get_cmap('YlGnBu')
         # color_map2 = plt.get_cmap('RdBu')
 

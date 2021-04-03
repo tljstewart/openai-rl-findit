@@ -34,7 +34,7 @@ def generate_environment(width: int, height: int, depth: int, source_x: int, sou
                 distance = np.sqrt(delta_x * delta_x + delta_y * delta_y + delta_z * delta_z)
                 # establishes difference in pollution level from cell to cell
                 distance_gradient = distance * grad
-                pollution_level = source_z - distance_gradient
+                pollution_level = 1 - distance_gradient
                 # print(pollution_level)
                 do2_level = 0 + .60 * distance_gradient
 
@@ -97,7 +97,7 @@ def program(environment, agent):
     i = 0
 
     # sets "lifetime" of agent in world render environment
-    for i in range(100):
+    for i in range(1000):
         #environment.render_agent(agent)
 
         # outputs data as a comma separated array
