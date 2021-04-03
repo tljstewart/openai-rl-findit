@@ -130,4 +130,3 @@ class Environment:
 
         #ax.matshow(self.dissolved_o2_data, cmap=color_map2, alpha=0.0)
         #ax.set_box_aspect((agent.x), (agent.y), (agent.z))
-
