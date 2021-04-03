@@ -34,7 +34,7 @@ def generate_environment(width: int, height: int, depth: int, source_x: int, sou
                 distance = np.sqrt(delta_x * delta_x + delta_y * delta_y + delta_z * delta_z)
                 # establishes difference in pollution level from cell to cell
                 distance_gradient = distance * grad
-                pollution_level = 1 - distance_gradient
+                pollution_level = source_z - distance_gradient
                 # print(pollution_level)
                 do2_level = 0 + .60 * distance_gradient
 
