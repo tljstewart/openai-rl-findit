@@ -118,36 +118,37 @@ def program(environment, agent):
     return compute_performance(cost), i
 
 
+if __name__ == "__main__":
 # env = generate_environment(20, 10, 0.35)
 # print(env)
-water = generate_environment(10, 10, 10, 5, 5, 5, 1/10, 0.0)
-bob = Agent(1, 1, 1, 10, 10, 10)
-for run_index in range(1000):
-    # log_name = current_time = time.strftime("%Y%m%d-%H%M%S", time.gmtime()) + '-' + str(run_index)
-    # create_log(log_name)
+    water = generate_environment(10, 10, 10, 5, 5, 5, 1/10, 0.0)
+    bob = Agent(1, 1, 1, 10, 10, 10)
+    for run_index in range(1000):
+        # log_name = current_time = time.strftime("%Y%m%d-%H%M%S", time.gmtime()) + '-' + str(run_index)
+        # create_log(log_name)
 
-    perf_1, total_step = program(water, bob)
-    bob.update_utilities()
-    bob.reset()
-    print(run_index, total_step)
+        perf_1, total_step = program(water, bob)
+        bob.update_utilities()
+        bob.reset()
+        print(run_index, total_step)
 
-    performance_measure.append(perf_1)
-    # prints to csv size, source location, distance, gradient, noise, steps and performance
-    # file_print([50, 50, 25, 1/25, 0, total_step, perf_1])
+        performance_measure.append(perf_1)
+        # prints to csv size, source location, distance, gradient, noise, steps and performance
+        # file_print([50, 50, 25, 1/25, 0, total_step, perf_1])
 
-#bob.print_utilities()
+    #bob.print_utilities()
 
-# performance_measure.append(program(0, generate_environment(10, 7), reflex_agent()));
+    # performance_measure.append(program(0, generate_environment(10, 7), reflex_agent()));
 
-# performance_measure.append(program(0, [0, 0.5, 1], reflex_agent))
+    # performance_measure.append(program(0, [0, 0.5, 1], reflex_agent))
 
-# performance_measure.append(program(1, [POLLUTED, CLEAN, POLLUTED, SOURCE], reflex_agent))
+    # performance_measure.append(program(1, [POLLUTED, CLEAN, POLLUTED, SOURCE], reflex_agent))
 
-# performance_measure.append(program(0, [SOURCE, CLEAN, POLLUTED], reflex_agent))
+    # performance_measure.append(program(0, [SOURCE, CLEAN, POLLUTED], reflex_agent))
 
-# performance_measure.append(program(0, [CLEAN, CLEAN, POLLUTED, SOURCE, POLLUTED, CLEAN], reflex_agent))
+    # performance_measure.append(program(0, [CLEAN, CLEAN, POLLUTED, SOURCE, POLLUTED, CLEAN], reflex_agent))
 
 
-# print('Total steps = ', total_step)
-# print("Performance = ", performance_measure)
-# print("Global Performance = ", mean(performance_measure))
+    # print('Total steps = ', total_step)
+    # print("Performance = ", performance_measure)
+    # print("Global Performance = ", mean(performance_measure))
