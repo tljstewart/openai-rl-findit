@@ -98,7 +98,7 @@ def program(environment, agent):
 
     # sets "lifetime" of agent in world render environment
     for i in range(100):
-        #environment.render_plt(agent)
+        #environment.render_agent(agent)
 
         # outputs data as a comma separated array
         # file_print([i, agent.last_pollution(), cost])
@@ -115,7 +115,7 @@ def program(environment, agent):
         # print(initial_location, environment_status, location)
         # print(score)
         # -- End Step
-    environment.render_plt(agent)
+        environment.render_agent(agent)
     return compute_performance(cost), i
 
 
@@ -124,6 +124,10 @@ if __name__ == "__main__":
 # print(env)
     water = generate_environment(10, 10, 10, 5, 5, 5, 1/10, 0.0)
     bob = Agent(1, 1, 1, 10, 10, 10)
+
+    #render the pollution grid in 3D
+    water.render_pollution_grid()
+
     for run_index in range(1000):
         # log_name = current_time = time.strftime("%Y%m%d-%H%M%S", time.gmtime()) + '-' + str(run_index)
         # create_log(log_name)

@@ -6,6 +6,7 @@ import numpy as np
 
 fig = plt.figure()
 ax = fig.gca(projection='3d')
+axAgent = fig.gca(projection='3d')
 
 
 # template for 2D environment containing (width, height) and pollution data for each cell. As well as debugging render.
@@ -80,25 +81,53 @@ class Environment:
         print("")
         time.sleep(0.001)
 
-    # visualizes agent in space in the Run window.
-    def render_plt(self, agent):
-        ax.cla()
-        color_map1 = plt.get_cmap('YlGnBu')
-        color_map2 = plt.get_cmap('RdBu')
+    def render_pollution_grid(self):
+        #ax is a global
 
         x = np.arange(0, self.width)
-        #x = x.flatten()
         y = np.arange(0, self.height)
-        #y = y.flatten()
-        z = self.pollution_data[:,2]
-        #z = z.flatten()
-        X, Y = np.meshgrid(x, y)
-        print(x)
-        print(y)
-        ax.plot_surface(X, Y, z, cmap=cm.viridis,
-                           linewidth=0, antialiased=False)
+        z = np.arange(0, self.depth)
+
+        ax.set_xlabel('X Label')
+        ax.set_ylabel('Y Label')
+        ax.set_zlabel('Z Label')
+        fig.colorbar(cm.ScalarMappable(cmap=cm.viridis), ax=ax)
+
+        for zpoint in z:
+            for ypoint in y:
+                for xpoint in x:
+                    size=self.pollution_data[xpoint][ypoint][zpoint] #s=size
+                    #print(size)
+                    normalize = cm.colors.Normalize(vmin=self.pollution_data.min(), vmax=self.pollution_data.max()) #norm=normalize,
+                    scalarMap = cm.ScalarMappable(norm=normalize, cmap=cm.viridis, )
+
+                    ax.scatter3D(xpoint, ypoint, zpoint, s=5, c=scalarMap.to_rgba(self.pollution_data[xpoint, ypoint, zpoint])) # c=self.pollution_data[xpoint,ypoint,zpoint], marker='*')
+                    #fig.colorbar(scalarMap, ax=ax)
+                    #todo:
+                    # for an xyz color this point between [0 1] based on the normalzied self.pollution_data
+
+    # visualizes agent in space in the Run window.
+    def render_agent(self, agent):
+        axAgent.scatter3D(agent.x, agent.y, agent.z, color='black')
+        plt.pause(0.00001)
+
+        axAgent.cla()
+        # color_map1 = plt.get_cmap('YlGnBu')
+        # color_map2 = plt.get_cmap('RdBu')
+
+        # x = np.arange(0, self.width)
+        # # #x = x.flatten()
+        # y = np.arange(0, self.height)
+        # # #y = y.flatten()
+        # z = np.arange(0, self.depth)
+        # z = self.pollution_data[:, 2]
+        # #z = z.flatten()
+        # X, Y = np.meshgrid(x, y)
+        # print(x)
+        # print(y)
+        # ax.plot_surface(X, Y, z, cmap=cm.viridis,
+        #                    linewidth=0, antialiased=False)
 
         #ax.matshow(self.dissolved_o2_data, cmap=color_map2, alpha=0.0)
         #ax.set_box_aspect((agent.x), (agent.y), (agent.z))
-        ax.scatter3D(agent.x, agent.y, agent.z)
-        plt.pause(0.00001)
+
