@@ -33,9 +33,17 @@ class Agent:
 
         self.epsilon_decay = epsilon_decay
 
+        # Exploration Factor: 1-epsilon, where epsilon range between 0 to 1,
+        # make a random choice epsilon = 1,
+        # strictly follow policy epsilon = 0
+        # some float combination of the random and policy
         self.epsilon = 1
 
+        # Discount Factor: Gamma is
+        # multiplied by the estimation of the optimal future value.
+        # The next reward’s importance is defined by the gamma parameter.
         self.gamma = 0.9
+
         # Initializes the previous_action to NONE. keeps track of the action taken prior to get to current tile
         self.previous_action = Agent.NONE
         # Initializes the previous_state to 0. keeps track of the status in the tile visited prior
@@ -43,7 +51,7 @@ class Agent:
         # Make Dict
         self.experiences = []
         # Make 3D numpy array
-        self.utility_table = [0] * space_width * space_height * space_depth
+        self.utility_table = np.zeros((self.width, self.height, self.depth))
 
     def location_string(self):
         return '(%s, %s, %s)' % (self.x, self.y, self.z)
