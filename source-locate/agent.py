@@ -55,7 +55,7 @@ class Agent:
 
     def location_string(self):
         return '(%s, %s, %s)' % (self.x, self.y, self.z)
-
+        #asdf
     def last_pollution(self):
         if len(self.experiences) == 0:
             return 0
