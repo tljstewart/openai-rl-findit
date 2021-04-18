@@ -7,6 +7,7 @@ import numpy as np
 
 from environment import Environment
 from agent import Agent
+from plot import PlotUtil
 
 # scoring
 from utils import file_print, create_log
@@ -15,7 +16,6 @@ performance_measure = []
 
 
 # utility_measure = []
-
 
 # Generates "world" setting size in 3D, location of the source and "pollution" in each cell
 # gradient/noise level of pollution smaller gradient -> more diffuse. More noise -> more stochastic
@@ -91,13 +91,14 @@ def compute_performance(cost):
 # Agent chooses an action, Action is applied to the environment by moving the agent
 # a way of keeping track of time and status in world in order to find the SOURCE
 # change in the environment = location + action
-def program(environment, agent):
+def program(environment, agent, plot):
     cost = 0
     i = 0
 
+
     # sets "lifetime" of agent in world render environment
-    for i in range(1000):
-        # environment.render_agent(agent, old=True, pause=0)
+    for i in range(50):
+        # plot.render_agent(agent, old=True, pause=0)
 
         # outputs data as a comma separated array
         # file_print([i, agent.last_pollution(), cost])
@@ -114,29 +115,33 @@ def program(environment, agent):
         # print(initial_location, environment_status, location)
         # print(score)
         # -- End Step
-        environment.render_agent(agent)
+
+        plot.render_pollution_grid(environment.pollution_data)
+        plot.render_agent(agent)
     return compute_performance(cost), i
 
 
 if __name__ == "__main__":
     # env = generate_environment(20, 10, 0.35)
     # print(env)
-    width = 5
-    height = 5
-    depth = 5
-    water = generate_environment(width, height, depth, 2, 2, 2, 1 / 5, 0.0)
+    width = 11
+    height =11
+    depth = 11
+
+    plot = PlotUtil(width, height, depth)
+    water = generate_environment(width, height, depth, 2, 2, 2, 1/11, 0.0)
     bob = Agent(1, 1, 1, width, height, depth)
 
     # render the pollution grid in 3D
-    water.render_pollution_grid()
+    plot.render_pollution_grid(water.pollution_data)
 
     for run_index in range(15):
         # log_name = current_time = time.strftime("%Y%m%d-%H%M%S", time.gmtime()) + '-' + str(run_index)
         # create_log(log_name)
 
-        perf_1, total_step = program(water, bob)
+        perf_1, total_step = program(water, bob, plot)
         bob.update_utilities()
-        #bob.render_utility()
+        plot.render_utility(bob.utility_table)
         bob.reset()
         # print(run_index, total_step)
 
@@ -145,7 +150,7 @@ if __name__ == "__main__":
         # file_print([50, 50, 25, 1/25, 0, total_step, perf_1])
         # bob.print_utilities()
 
-    #bob.render_utility(stop=True)
+    plot.render_utility(bob.utility_table, stop=True)
 
     # performance_measure.append(program(0, generate_environment(10, 7), reflex_agent()));
 

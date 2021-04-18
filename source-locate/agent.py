@@ -35,18 +35,6 @@ class Agent:
         self.height = space_height
         self.depth = space_depth
 
-        # Put in its own setup function
-        # self.fig = plt.figure()
-        # self.ax = self.fig.add_subplot(projection='3d')
-        # self.ax.set_xlabel('X Label')
-        # self.ax.set_ylabel('Y Label')
-        # self.ax.set_zlabel('Z Label')
-        # self.fig.colorbar(cm.ScalarMappable(cmap=cm.viridis), ax=self.ax)
-        # x = np.arange(0, self.width)
-        # y = np.arange(0, self.height)
-        # z = np.arange(0, self.depth)
-        # self.xs, self.ys, self.zs = np.meshgrid(x, y, z)
-
         self.epsilon_decay = epsilon_decay
         self.epsilon = 1
 
@@ -357,36 +345,6 @@ class Agent:
                 for z in range(self.depth):
                     print('{:.2f} '.format(self.utility_table[x, y, z]), end='')
             print()
-
-    def render_utility(self, stop=False):
-        # ax is a global
-        self.ax.clear()
-
-        min_u = self.utility_table.min()
-        max_u = self.utility_table.max()
-
-        if max_u - min_u == 0:
-            return
-
-        # normalize = cm.colors.Normalize(vmin=min_pollution, vmax=max_pollution)
-        # scalar_map = cm.ScalarMappable(norm=normalize, cmap=cm.viridis)
-
-        normalized_utilities = (self.utility_table - min_u) / (max_u - min_u)
-        self.ax.scatter(self.xs, self.ys, self.zs, s=normalized_utilities * 50)
-
-        # for zpoint in z:
-        #     for ypoint in y:
-        #         for xpoint in x:
-        #             size = self.pollution_data[xpoint][ypoint][zpoint]  # s=size
-        #             pollution = self.pollution_data[xpoint, ypoint, zpoint]
-        #             self.ax.scatter3D(xpoint, ypoint, zpoint, s=size*20, c=scalar_map.to_rgba(pollution))  # c=self.pollution_data[xpoint,ypoint,zpoint], marker='*')
-        #             # fig.colorbar(scalarMap, ax=ax)
-        #             # todo:
-        #             # for an xyz color this point between [0 1] based on the normalzied self.pollution_data
-        if stop:
-            plt.show()
-        else:
-            plt.pause(0.5)
 
     def reset(self):
         self.epsilon *= self.epsilon_decay
