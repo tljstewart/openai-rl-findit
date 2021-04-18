@@ -3,24 +3,24 @@
 # coordinate grid 10x10
 # cells contain percentage 0-100 pollution
 import random
-import math
-import time
 import numpy as np
-
 
 from environment import Environment
 from agent import Agent
+from plot import PlotUtil
 
 # scoring
 from utils import file_print, create_log
 
 performance_measure = []
-# utility_measure = []
 
+
+# utility_measure = []
 
 # Generates "world" setting size in 3D, location of the source and "pollution" in each cell
 # gradient/noise level of pollution smaller gradient -> more diffuse. More noise -> more stochastic
-def generate_environment(width: int, height: int, depth: int, source_x: int, source_y: int, source_z: int, grad=0.1, noise_amplitude=0.0):
+def generate_environment(width: int, height: int, depth: int, source_x: int, source_y: int, source_z: int, grad=0.1,
+                         noise_amplitude=0.0):
     environment = Environment(width, height, depth, (source_x, source_y, source_z))
 
     # Sets the pollution diffusion from source to be no-noise or noisy
@@ -91,14 +91,14 @@ def compute_performance(cost):
 # Agent chooses an action, Action is applied to the environment by moving the agent
 # a way of keeping track of time and status in world in order to find the SOURCE
 # change in the environment = location + action
-def program(environment, agent):
-
+def program(environment, agent, plot):
     cost = 0
     i = 0
 
+
     # sets "lifetime" of agent in world render environment
-    for i in range(1000):
-        #environment.render_agent(agent)
+    for i in range(50):
+        # plot.render_agent(agent, old=True, pause=0)
 
         # outputs data as a comma separated array
         # file_print([i, agent.last_pollution(), cost])
@@ -115,33 +115,42 @@ def program(environment, agent):
         # print(initial_location, environment_status, location)
         # print(score)
         # -- End Step
-        environment.render_agent(agent)
+
+        plot.render_pollution_grid(environment.pollution_data)
+        plot.render_agent(agent)
     return compute_performance(cost), i
 
 
 if __name__ == "__main__":
-# env = generate_environment(20, 10, 0.35)
-# print(env)
-    water = generate_environment(10, 10, 10, 5, 5, 5, 1/10, 0.0)
-    bob = Agent(1, 1, 1, 10, 10, 10)
+    # env = generate_environment(20, 10, 0.35)
+    # print(env)
+    width = 11
+    height =11
+    depth = 11
 
-    #render the pollution grid in 3D
-    water.render_pollution_grid()
+    plot = PlotUtil(width, height, depth)
+    water = generate_environment(width, height, depth, 2, 2, 2, 1/11, 0.0)
+    bob = Agent(1, 1, 1, width, height, depth)
 
-    for run_index in range(1000):
+    # render the pollution grid in 3D
+    plot.render_pollution_grid(water.pollution_data)
+
+    for run_index in range(15):
         # log_name = current_time = time.strftime("%Y%m%d-%H%M%S", time.gmtime()) + '-' + str(run_index)
         # create_log(log_name)
 
-        perf_1, total_step = program(water, bob)
+        perf_1, total_step = program(water, bob, plot)
         bob.update_utilities()
+        plot.render_utility(bob.utility_table)
         bob.reset()
-        print(run_index, total_step)
+        # print(run_index, total_step)
 
         performance_measure.append(perf_1)
         # prints to csv size, source location, distance, gradient, noise, steps and performance
         # file_print([50, 50, 25, 1/25, 0, total_step, perf_1])
+        # bob.print_utilities()
 
-    #bob.print_utilities()
+    plot.render_utility(bob.utility_table, stop=True)
 
     # performance_measure.append(program(0, generate_environment(10, 7), reflex_agent()));
 
@@ -152,7 +161,6 @@ if __name__ == "__main__":
     # performance_measure.append(program(0, [SOURCE, CLEAN, POLLUTED], reflex_agent))
 
     # performance_measure.append(program(0, [CLEAN, CLEAN, POLLUTED, SOURCE, POLLUTED, CLEAN], reflex_agent))
-
 
     # print('Total steps = ', total_step)
     # print("Performance = ", performance_measure)

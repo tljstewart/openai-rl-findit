@@ -3,7 +3,10 @@ import sys
 from environment import Environment
 from utils import debug_print
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 REWARD = 100
+
 # Template for the agent containing agents x and y coordinate within the world.
 # Contains fnx initializing the location of the agent within the world
 # fnx is_at provides agent location at specific step in the world
@@ -11,11 +14,12 @@ REWARD = 100
 # fnx move_: e,w,n,s provide changes to the appropriate coordinate to move N, S, E, W.  origin at bottom left
 
 
+
 class Agent:
 
+    NONE = 'none'
     POSX = (1, 0, 0)
     NEGX = (-1, 0, 0)
-    NONE = 'none'
     NEGY = (0, -1, 0)
     POSY = (0, 1, 0)
     POSZ = (0, 0, 1)
@@ -37,6 +41,7 @@ class Agent:
         # make a random choice epsilon = 1,
         # strictly follow policy epsilon = 0
         # some float combination of the random and policy
+
         self.epsilon = 1
 
         # Discount Factor: Gamma is
@@ -51,6 +56,7 @@ class Agent:
         # Make Dict
         self.experiences = []
         # Make 3D numpy array
+
         self.utility_table = np.zeros((self.width, self.height, self.depth))
 
     def location_string(self):
@@ -93,7 +99,6 @@ class Agent:
         # needs next location
 
     def choose_action(self, environment: Environment):
-
 
         # perceive environment status based on location
         pollution = environment.get_pollution(self.x, self.y, self.z)
@@ -342,14 +347,14 @@ class Agent:
         for exp_idx in range(exp_count):
             experience = self.experiences[exp_idx]
             x, y, z = experience[0]
-            current_utility = self.utility_table[y * self.width + x * self.height + z]
-            self.utility_table[y * self.width + x * self.height + z] = (current_utility + trial_u[exp_idx]) / 2
+            current_utility = self.utility_table[x, y, z]
+            self.utility_table[x, y, z] = (current_utility + trial_u[exp_idx]) / 2
 
     def print_utilities(self):
         for x in range(self.width):
             for y in range(self.height):
                 for z in range(self.depth):
-                    print('{:.2f} '.format(self.utility_table[y * self.width + x * self.height + z]), end='')
+                    print('{:.2f} '.format(self.utility_table[x, y, z]), end='')
             print()
 
     def reset(self):
@@ -398,11 +403,11 @@ class Agent:
 
         #   in case the action is right location equals location + 1
         if action == Agent.POSZ:
-           self.move_POSZ()
+            self.move_POSZ()
 
         #   in case the action is left location equals location - 1
         if action == Agent.NEGZ:
-          self.move_NEGZ()
+            self.move_NEGZ()
 
         reward = self.reward(environment)
         # Make experiences a dict with key being x, y, z
