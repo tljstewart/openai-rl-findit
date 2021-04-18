@@ -3,7 +3,10 @@ import sys
 from environment import Environment
 from utils import debug_print
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 REWARD = 100
+
 # Template for the agent containing agents x and y coordinate within the world.
 # Contains fnx initializing the location of the agent within the world
 # fnx is_at provides agent location at specific step in the world
@@ -11,11 +14,12 @@ REWARD = 100
 # fnx move_: e,w,n,s provide changes to the appropriate coordinate to move N, S, E, W.  origin at bottom left
 
 
+
 class Agent:
 
+    NONE = 'none'
     POSX = (1, 0, 0)
     NEGX = (-1, 0, 0)
-    NONE = 'none'
     NEGY = (0, -1, 0)
     POSY = (0, 1, 0)
     POSZ = (0, 0, 1)
@@ -31,8 +35,19 @@ class Agent:
         self.height = space_height
         self.depth = space_depth
 
-        self.epsilon_decay = epsilon_decay
+        # Put in its own setup function
+        # self.fig = plt.figure()
+        # self.ax = self.fig.add_subplot(projection='3d')
+        # self.ax.set_xlabel('X Label')
+        # self.ax.set_ylabel('Y Label')
+        # self.ax.set_zlabel('Z Label')
+        # self.fig.colorbar(cm.ScalarMappable(cmap=cm.viridis), ax=self.ax)
+        # x = np.arange(0, self.width)
+        # y = np.arange(0, self.height)
+        # z = np.arange(0, self.depth)
+        # self.xs, self.ys, self.zs = np.meshgrid(x, y, z)
 
+        self.epsilon_decay = epsilon_decay
         self.epsilon = 1
 
         self.gamma = 0.9
@@ -43,7 +58,7 @@ class Agent:
         # Make Dict
         self.experiences = []
         # Make 3D numpy array
-        self.utility_table = [0] * space_width * space_height * space_depth
+        self.utility_table = np.zeros((space_width, space_height, space_depth))
 
     def location_string(self):
         return '(%s, %s, %s)' % (self.x, self.y, self.z)
@@ -85,7 +100,6 @@ class Agent:
         # needs next location
 
     def choose_action(self, environment: Environment):
-
 
         # perceive environment status based on location
         pollution = environment.get_pollution(self.x, self.y, self.z)
@@ -334,15 +348,45 @@ class Agent:
         for exp_idx in range(exp_count):
             experience = self.experiences[exp_idx]
             x, y, z = experience[0]
-            current_utility = self.utility_table[y * self.width + x * self.height + z]
-            self.utility_table[y * self.width + x * self.height + z] = (current_utility + trial_u[exp_idx]) / 2
+            current_utility = self.utility_table[x, y, z]
+            self.utility_table[x, y, z] = (current_utility + trial_u[exp_idx]) / 2
 
     def print_utilities(self):
         for x in range(self.width):
             for y in range(self.height):
                 for z in range(self.depth):
-                    print('{:.2f} '.format(self.utility_table[y * self.width + x * self.height + z]), end='')
+                    print('{:.2f} '.format(self.utility_table[x, y, z]), end='')
             print()
+
+    def render_utility(self, stop=False):
+        # ax is a global
+        self.ax.clear()
+
+        min_u = self.utility_table.min()
+        max_u = self.utility_table.max()
+
+        if max_u - min_u == 0:
+            return
+
+        # normalize = cm.colors.Normalize(vmin=min_pollution, vmax=max_pollution)
+        # scalar_map = cm.ScalarMappable(norm=normalize, cmap=cm.viridis)
+
+        normalized_utilities = (self.utility_table - min_u) / (max_u - min_u)
+        self.ax.scatter(self.xs, self.ys, self.zs, s=normalized_utilities * 50)
+
+        # for zpoint in z:
+        #     for ypoint in y:
+        #         for xpoint in x:
+        #             size = self.pollution_data[xpoint][ypoint][zpoint]  # s=size
+        #             pollution = self.pollution_data[xpoint, ypoint, zpoint]
+        #             self.ax.scatter3D(xpoint, ypoint, zpoint, s=size*20, c=scalar_map.to_rgba(pollution))  # c=self.pollution_data[xpoint,ypoint,zpoint], marker='*')
+        #             # fig.colorbar(scalarMap, ax=ax)
+        #             # todo:
+        #             # for an xyz color this point between [0 1] based on the normalzied self.pollution_data
+        if stop:
+            plt.show()
+        else:
+            plt.pause(0.5)
 
     def reset(self):
         self.epsilon *= self.epsilon_decay
@@ -390,11 +434,11 @@ class Agent:
 
         #   in case the action is right location equals location + 1
         if action == Agent.POSZ:
-           self.move_POSZ()
+            self.move_POSZ()
 
         #   in case the action is left location equals location - 1
         if action == Agent.NEGZ:
-          self.move_NEGZ()
+            self.move_NEGZ()
 
         reward = self.reward(environment)
         # Make experiences a dict with key being x, y, z
