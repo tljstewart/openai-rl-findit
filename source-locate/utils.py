@@ -1,6 +1,6 @@
 import time
 
-DEBUG = False
+DEBUG = True
 
 file = None
 
