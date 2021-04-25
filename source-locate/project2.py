@@ -95,9 +95,8 @@ def program(environment, agent, plot):
     cost = 0
     i = 0
 
-
     # sets "lifetime" of agent in world render environment
-    for i in range(50):
+    for i in range(100):
         # plot.render_agent(agent, old=True, pause=0)
 
         # outputs data as a comma separated array
@@ -125,7 +124,7 @@ if __name__ == "__main__":
     # env = generate_environment(20, 10, 0.35)
     # print(env)
     width = 11
-    height =11
+    height = 11
     depth = 11
 
     plot = PlotUtil(width, height, depth)
@@ -143,6 +142,7 @@ if __name__ == "__main__":
         bob.update_utilities()
         plot.render_utility(bob.utility_table)
         bob.reset()
+        # todo: store each trial initial optimal distance and total number of steps to normalize
         # print(run_index, total_step)
 
         performance_measure.append(perf_1)

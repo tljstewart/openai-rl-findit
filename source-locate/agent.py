@@ -23,11 +23,11 @@ class Agent:
     NEGY = (0, -1, 0)
     POSY = (0, 1, 0)
     POSZ = (0, 0, 1)
-    NEGZ = (0, 0 -1)
+    NEGZ = (0, 0, -1)
 
     MOVES = [NEGY, POSY, POSX, NEGX, POSZ, NEGZ]
 
-    def __init__(self, x, y, z, space_width, space_height, space_depth, epsilon_decay=0.9999):
+    def __init__(self, x, y, z, space_width, space_height, space_depth, epsilon_decay=0.9):
         self.x = x
         self.y = y
         self.z = z
@@ -61,7 +61,7 @@ class Agent:
 
     def location_string(self):
         return '(%s, %s, %s)' % (self.x, self.y, self.z)
-        #asdf
+
     def last_pollution(self):
         if len(self.experiences) == 0:
             return 0
@@ -81,22 +81,18 @@ class Agent:
             moves.append(Agent.POSX)
 
         if self.y > 0:
-            moves.append(Agent.POSY)
-
-        if self.y < self.height - 1:
             moves.append(Agent.NEGY)
 
-        if self.z > 0:
-            moves.append(Agent.POSZ)
+        if self.y < self.height - 1:
+            moves.append(Agent.POSY)
 
-        if self.z < self.depth - 1:
+        if self.z > 0:
             moves.append(Agent.NEGZ)
 
-        return moves
+        if self.z < self.depth - 1:
+            moves.append(Agent.POSZ)
 
-    # Need exploitation
-        # need best utility and best action. both initialized to none.
-        # needs next location
+        return moves
 
     def choose_action(self, environment: Environment):
 
@@ -110,225 +106,65 @@ class Agent:
             print('Found Source')
             return Agent.NONE
 
-        # if agent is at the NEGX boundary and corner will move in bounds
-        # These are the 8 corner cases
-        # ----------------------------------------------
-        if self.x == 0 and self.y == 0 and self.z == 0:
-            action = random.choice((Agent.POSX, Agent.POSY, Agent.POSZ))
-            debug_print('Agent in corner. Moving %s from %s. Pollution: %s do2: %s'
-                        % (action, self.location_string(), pollution, do2))
-            return action
-
-        elif self.x == 0 and self.y == 0 and self.z == environment.depth - 1:
-            action = random.choice((Agent.POSX, Agent.POSY, Agent.NEGZ))
-            debug_print('Agent in corner. Moving %s from %s. Pollution: %s do2: %s'
-                        % (action, self.location_string(), pollution, do2))
-            return action
-
-        elif self.x == 0 and self.y == environment.height - 1 and self.z == 0:
-            action = random.choice((Agent.POSX, Agent.NEGY, Agent.POSZ))
-            debug_print('Agent in corner. Moving %s from %s. Pollution: %s do2: %s'
-                        % (action, self.location_string(), pollution, do2))
-            return action
-
-        elif self.x == 0 and self.y == environment.height - 1 and self.z == environment.depth - 1:
-            action = random.choice((Agent.POSX, Agent.NEGY, Agent.NEGZ))
-            debug_print('Agent in corner. Moving %s from %s. Pollution: %s do2: %s'
-                        % (action, self.location_string(), pollution, do2))
-            return action
-
-        elif self.x == environment.width - 1 and self.y == 0 and self.z == environment.depth - 1:
-            action = random.choice((Agent.NEGX, Agent.POSY, Agent.NEGZ))
-            debug_print('Agent in corner. Moving %s from %s. Pollution: %s do2: %s'
-                        % (action, self.location_string(), pollution, do2))
-            return action
-
-        elif self.x == environment.width - 1 and self.y == environment.height - 1 and self.z == environment.depth - 1:
-            action = random.choice((Agent.NEGX, Agent.NEGY, Agent.NEGZ))
-            debug_print('Agent in corner. Moving %s from %s. Pollution: %s do2: %s'
-                        % (action, self.location_string(), pollution, do2))
-            return action
-
-        elif self.x == environment.width - 1 and self.y == 0 and self.z == 0:
-            action = random.choice((Agent.NEGX, Agent.POSY, Agent.POSZ))
-            debug_print('Agent in corner. Moving %s from %s. Pollution: %s do2: %s'
-                        % (action, self.location_string(), pollution, do2))
-            return action
-
-        elif self.x == environment.width - 1 and self.y == environment.height - 1 and self.z == 0:
-            action = random.choice((Agent.NEGX, Agent.NEGY, Agent.POSZ))
-            debug_print('Agent in corner. Moving %s from %s. Pollution: %s do2: %s'
-                        % (action, self.location_string(), pollution, do2))
-            return action
-        # ----------------------------------------------
-        # 12 edges
-        # ----------------------------------------------
-        elif self.x == 0 and self.y < environment.height - 1 and self.z == 0:
-            action = random.choice((Agent.POSX, Agent.NEGY, Agent.POSY, Agent.POSZ))
-            debug_print('Agent on edge. Moving %s from %s. Pollution: %s do2: %s'
-                        % (action, self.location_string(), pollution, do2))
-            return action
-
-        elif self.x < environment.width - 1 and self.y == environment.height - 1 and self.z == 0 :
-            action = random.choice((Agent.POSX, Agent.NEGX, Agent.NEGY, Agent.POSZ))
-            debug_print('Agent on edge. Moving %s from %s. Pollution: %s do2: %s'
-                        % (action, self.location_string(), pollution, do2))
-            return action
-
-        elif self.x < environment.width - 1 and self.y == 0 and self.z == 0:
-            action = random.choice((Agent.NEGX, Agent.POSX, Agent.POSY, Agent.POSZ))
-            debug_print('Agent on edge. Moving %s from %s. Pollution: %s do2: %s'
-                        % (action, self.location_string(), pollution, do2))
-            return action
-
-        elif self.x == 0 and self.y == 0 and self.z < environment.depth - 1:
-            action = random.choice((Agent.POSX, Agent.POSY, Agent.NEGZ, Agent.POSZ))
-            debug_print('Agent on edge. Moving %s from %s. Pollution: %s do2: %s'
-                        % (action, self.location_string(), pollution, do2))
-            return action
-
-        elif self.x == environment.width - 1 and self.y < environment.height - 1 and self.z == 0:
-            action = random.choice((Agent.NEGX, Agent.NEGY, Agent.POSY, Agent.POSZ))
-            debug_print('Agent on edge. Moving %s from %s. Pollution: %s do2: %s'
-                        % (action, self.location_string(), pollution, do2))
-            return action
-
-        elif self.x == 0 and self.y == environment.height - 1 and self.z < environment.depth - 1:
-            action = random.choice((Agent.POSX, Agent.NEGY, Agent.NEGZ, Agent.POSZ))
-            debug_print('Agent on edge. Moving %s from %s. Pollution: %s do2: %s'
-                        % (action, self.location_string(), pollution, do2))
-            return action
-
-        elif self.x == 0 and self.y < environment.height - 1 and self.z == environment.depth - 1:
-            action = random.choice((Agent.POSX, Agent.NEGY, Agent.POSY, Agent.NEGZ))
-            debug_print('Agent on edge. Moving %s from %s. Pollution: %s do2: %s'
-                        % (action, self.location_string(), pollution, do2))
-            return action
-
-        elif self.x < environment.width - 1 and self.y == 0 and self.z == environment.depth - 1:
-            action = random.choice((Agent.POSX, Agent.NEGX, Agent.POSY, Agent.NEGZ))
-            debug_print('Agent on edge. Moving %s from %s. Pollution: %s do2: %s'
-                        % (action, self.location_string(), pollution, do2))
-            return action
-
-        elif self.x < environment.width - 1 and self.y == environment.height - 1 and self.z == environment.depth - 1:
-            action = random.choice((Agent.NEGX, Agent.POSX, Agent.NEGY, Agent.NEGZ))
-            debug_print('Agent on edge. Moving %s from %s. Pollution: %s do2: %s'
-                        % (action, self.location_string(), pollution, do2))
-            return action
-
-        elif self.x == environment.width - 1 and self.y == 0 and self.z < environment.depth - 1:
-            action = random.choice((Agent.NEGX, Agent.POSY, Agent.NEGZ, Agent.POSZ))
-            debug_print('Agent on edge. Moving %s from %s. Pollution: %s do2: %s'
-                        % (action, self.location_string(), pollution, do2))
-            return action
-
-        elif self.x == environment.width - 1 and self.y < environment.height - 1 and self.z == environment.depth - 1:
-            action = random.choice((Agent.NEGX, Agent.NEGY, Agent.POSY, Agent.NEGZ))
-            debug_print('Agent on edge. Moving %s from %s. Pollution: %s do2: %s'
-                        % (action, self.location_string(), pollution, do2))
-            return action
-
-        elif self.x == environment.width - 1 and self.y == environment.height - 1 and self.z < environment.depth - 1:
-            action = random.choice((Agent.NEGX, Agent.NEGY, Agent.NEGZ, Agent.POSZ))
-            debug_print('Agent on edge. Moving %s from %s. Pollution: %s do2: %s'
-                        % (action, self.location_string(), pollution, do2))
-            return action
-        # ----------------------------------------------
-        # 6 faces
-        # ----------------------------------------------
-        elif self.x < environment.width - 1 and self.y < environment.height - 1 and self.z == 0:
-            action = random.choice((Agent.POSX, Agent.NEGX, Agent.POSY, Agent.NEGY, Agent.POSZ))
-            debug_print('Agent on face 1. Moving %s from %s. Pollution: %s do2: %s'
-                        % (action, self.location_string(), pollution, do2))
-            return action
-
-        elif self.x == 0 and self.y < environment.height - 1 and self.z < environment.depth - 1 :
-            action = random.choice((Agent.POSX, Agent.POSY, Agent.NEGY, Agent.NEGZ, Agent.POSZ))
-            debug_print('Agent on face 2. Moving %s from %s. Pollution: %s do2: %s'
-                        % (action, self.location_string(), pollution, do2))
-            return action
-
-        elif self.x < environment.width - 1 and self.y == 0 and self.z < environment.depth - 1:
-            action = random.choice((Agent.POSX, Agent.NEGX, Agent.POSY, Agent.NEGZ, Agent.POSZ))
-            debug_print('Agent on face 3. Moving %s from %s. Pollution: %s do2: %s'
-                        % (action, self.location_string(), pollution, do2))
-            return action
-
-        elif self.x < environment.width - 1 and self.y < environment.height - 1 and self.z == environment.depth - 1:
-            action = random.choice((Agent.POSX, Agent.NEGX, Agent.POSY, Agent.NEGY, Agent.NEGZ))
-            debug_print('Agent on face 4. Moving %s from %s. Pollution: %s do2: %s'
-                        % (action, self.location_string(), pollution, do2))
-            return action
-
-        elif self.x < environment.width - 1 and self.y == environment.height - 1 and self.z < environment.depth - 1:
-            action = random.choice((Agent.POSX, Agent.NEGX, Agent.NEGY, Agent.NEGZ, Agent.POSZ))
-            debug_print('Agent on face 5. Moving %s from %s. Pollution: %s do2: %s'
-                        % (action, self.location_string(), pollution, do2))
-            return action
-
-        elif self.x == environment.width - 1 and self.y < environment.height - 1 and self.z < environment.depth - 1:
-            action = random.choice((Agent.NEGX, Agent.POSY, Agent.NEGY, Agent.NEGZ, Agent.POSZ))
-            debug_print('Agent on face 6. Moving %s from %s. Pollution: %s do2: %s'
-                        % (action, self.location_string(), pollution, do2))
-            return action
-
-        else:
-            action = random.choice((Agent.POSX, Agent.NEGX, Agent.POSY, Agent.NEGY, Agent.NEGZ, Agent.POSZ))
-            debug_print('Agent is within bounds. Moving %s from %s. Pollution: %s do2: %s'
-                        % (action, self.location_string(), pollution, do2))
-            return action
-
         # Error checking
-        if self.x or self.y or self.z < 0:
+        if self.x < 0 or self.y < 0 or self.z < 0:
             print('ERROR: Agent is outside of bounds, exiting')
             sys.exit()
+
         # prevents agent from getting stuck in initial "previous_action"
-        if self.previous_action == Agent.NONE:
-            return random.choice((Agent.NEGX, Agent.POSX, Agent.NEGY, Agent.POSY, Agent.NEGZ, Agent.POSZ))
+        # if self.previous_action == Agent.NONE:
+        #   return random.choice((Agent.NEGX, Agent.POSX, Agent.NEGY, Agent.POSY, Agent.NEGZ, Agent.POSZ))
 
-        # # exploration using epsilon decay
-        # # encourages agent to explore early in the process
-        # moves = self.potential_moves()
-        # if random.random() < self.epsilon:
-        #     return random.choice(moves)
-        #
-        # # Exploitation of Action Policy
-        # # exploit
-        # best_utility = None
-        # best_move = None
-        # for move in moves:
-        #     next_location = self.next_local(move)
-        #     utility = self.utility_table[next_location[1] * self.width + next_location[0]]
-        #     if best_utility is None or utility > best_utility:
-        #         best_utility = utility
-        #         best_move = move
-        #
-        # return best_move
+        # exploration using epsilon decay
+        # encourages agent to explore early in the process
+        moves = self.potential_moves()
 
-        # if pollution is increasing and DO2 is decreasing the agent will return the previous action otherwise random.
-        if do2 < self.last_do2():
-            debug_print('Moving %s, from %s pollution: %s do2: %s.'
-                        % (self.previous_action, self.location_string(), pollution, do2))
-            return self.previous_action
-
-        if do2 == self.last_do2():
-            if pollution >= self.last_pollution():
-                debug_print('Moving %s, from %s pollution: %s do2: %s.'
-                            % (self.previous_action, self.location_string(), pollution, do2))
-                return self.previous_action
-            else:
-                action = random.choice((Agent.NEGX, Agent.POSX, Agent.NEGY, Agent.POSY, Agent.POSZ, Agent.NEGZ))
-                debug_print('Moving %s from %s pollution: %s , DO2: %s'
-                            % (action, self.location_string(), pollution, do2))
-                return action
-
-        if do2 > self.last_do2():
-            action = random.choice((Agent.NEGX, Agent.POSX, Agent.NEGY, Agent.POSY, Agent.POSZ, Agent.NEGZ))
-            # debug_print('DO2 increasing. Moving %s' % action)
+        # Exploration
+        if random.random() < self.epsilon:
+            action = random.choice(moves)
+            debug_print('Moving %s from %s. Pollution: %s do2: %s'
+                        % (action, self.location_string(), pollution, do2))
             return action
 
-        print("unknown status:", pollution)
+
+        # Exploitation of Action Policy
+        # exploit
+        best_utility = None
+        best_move = None
+        for move in moves:
+            debug_print('Checking move %s.' % (move, ))
+            x, y, z = self.next_local(move)
+            utility = self.utility_table[x, y, z]
+            if best_utility is None or utility > best_utility:
+                best_utility = utility
+                best_move = move
+
+        print('choose based on utility')
+        return best_move
+
+        # if pollution is increasing and DO2 is decreasing the agent will return the previous action otherwise random.
+        # if do2 < self.last_do2():
+        #     debug_print('Moving %s, from %s pollution: %s do2: %s.'
+        #                 % (self.previous_action, self.location_string(), pollution, do2))
+        #     return self.previous_action
+        #
+        # if do2 == self.last_do2():
+        #     if pollution >= self.last_pollution():
+        #         debug_print('Moving %s, from %s pollution: %s do2: %s.'
+        #                     % (self.previous_action, self.location_string(), pollution, do2))
+        #         return self.previous_action
+        #     else:
+        #         action = random.choice((Agent.NEGX, Agent.POSX, Agent.NEGY, Agent.POSY, Agent.POSZ, Agent.NEGZ))
+        #         debug_print('Moving %s from %s pollution: %s , DO2: %s'
+        #                     % (action, self.location_string(), pollution, do2))
+        #         return action
+        #
+        # if do2 > self.last_do2():
+        #     action = random.choice((Agent.NEGX, Agent.POSX, Agent.NEGY, Agent.POSY, Agent.POSZ, Agent.NEGZ))
+        #     # debug_print('DO2 increasing. Moving %s' % action)
+        #     return action
+        #
+        # print("unknown status:", pollution)
 
     def is_at(self, x, y, z):
         # print(x, y, z)
@@ -344,6 +180,7 @@ class Agent:
                 trial_u[r_idx-1] += exp_reward
                 exp_reward *= self.gamma
 
+        # alpha is 0.5 (utility+trialu/2). adjust alpha by changing denominator
         for exp_idx in range(exp_count):
             experience = self.experiences[exp_idx]
             x, y, z = experience[0]
@@ -358,6 +195,7 @@ class Agent:
             print()
 
     def reset(self):
+        # todo once total steps are normalized in the project.py reset to random positions
         self.epsilon *= self.epsilon_decay
         self.x = 0
         self.y = 0
