@@ -2,6 +2,7 @@
 \documentclass[conference]{IEEEtran}
 \IEEEoverridecommandlockouts
 % The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+\usepackage[subpreambles=true]{standalone}
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{algorithmic}
@@ -17,6 +18,21 @@
 \presetkeys{todonotes}{inline}{}
 
 %\usepackage{spelling}
+
+%\usepackage[utf8]{inputenc}
+%\usepackage[english]{babel}
+%\usepackage{import}
+%\usepackage[utf8]{inputenc} % this is needed for umlauts
+%\usepackage[english]{babel} % this is needed for umlauts
+%\usepackage[T1]{fontenc}    % this is needed for correct output of umlauts in pdf
+%\usepackage{braket} % needed for \Set
+%\usepackage{caption}
+%\usepackage{algorithm}
+%\usepackage[algcompatible, noend]{algpseudocode}
+
+%\DeclareCaptionFormat{myformat}{#3}
+%\captionsetup[algorithm]{format=myformat}
+%\DeclareMathOperator*{\argmax}{arg\,max}
 
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
@@ -37,7 +53,7 @@ cct21@students.uwf}
 \IEEEauthorblockA{\textit{Intelligent Systems and Robotics} \\
 \textit{University of West Florida}\\
 Pensacola, USA \\
-TODO@students.uwf}
+kjf13@students.uwf}
 \and
 \IEEEauthorblockN{Timothy L.J. Stewart}
 \IEEEauthorblockA{\textit{Intelligent Systems and Robotics} \\
@@ -96,6 +112,16 @@ Demonstrated methods of source localization such as local search and optimizatio
 \section{Methods}
 A python interface was implemented to simulate an agent and a three-dimensional environment. A uniform concentration gradient \todoexplain{Explain data, pollution? units?} was applied around a source point which the agents goal was to locate. The agent was trained using Direct Utility Estimation \todoref{Cite this: 21.2.1 Direct utility estimation, Artificial Intelligence A Modern Approach Third Edition, pg 833}
 
+%\include{includes/q-learning.tex}
+%\import{includes/}{q-learning.tex}
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[scale=.5]{includes/q-learning.png}}
+\caption{Q-Learning Algorithm.}
+\label{qlfig}
+\end{figure}
+
+
 \section{Experiments and Results}
 	\missingfigure{add figures in experiments}
 	\begin{figure}[htbp]
@@ -103,6 +129,11 @@ A python interface was implemented to simulate an agent and a three-dimensional 
 	\caption{Example of a figure caption.}
 	\label{Cool Figure 1}
 	\end{figure}
+
+\begin{equation}
+\underbrace{\text{New}Q(s,a)}_{\scriptstyle\text{New Q-Value}}=\mkern-20mu\underbrace{Q(s,a)}_{\scriptstyle\text{Current Q-Value}}\mkern-15mu+\mkern-30mu\underset{\text{Learning Rate}}{\underset{\Bigl|}{\alpha}}\mkern-30mu[\underbrace{R(s,a)}_{\scriptstyle\text{Reward}}+\mkern-20mu\underset{\text{Discount rate}}{\underset{\Biggl|}{\gamma}}\mkern-65mu\overbrace{\max Q'(s',a')}^{\scriptstyle\substack{\text{Maximum predicted reward, given} \\ \text{new state and all possible actions}}}\mkern-40mu-Q(s,a)]
+\end{equation}
+
 \section{Conclusion}
 \section{Future Work}
 \todo{ML Project Paper Due 2021-MAY-06}
