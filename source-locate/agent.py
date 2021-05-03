@@ -27,7 +27,7 @@ class Agent:
 
     MOVES = [NEGY, POSY, POSX, NEGX, POSZ, NEGZ]
 
-    def __init__(self, x, y, z, space_width, space_height, space_depth, epsilon_decay=0.9):
+    def __init__(self, x, y, z, space_width, space_height, space_depth, epsilon_decay=0.95):
         self.x = x
         self.y = y
         self.z = z
@@ -58,6 +58,10 @@ class Agent:
         # Make 3D numpy array
 
         self.utility_table = np.zeros((self.width, self.height, self.depth))
+
+    def distance_to(self, point):
+        manhattan_distance = abs(self.x - point[0]) + abs(self.y - point[1]) + abs(self.z - point[2])
+        return manhattan_distance
 
     def location_string(self):
         return '(%s, %s, %s)' % (self.x, self.y, self.z)
@@ -139,7 +143,7 @@ class Agent:
                 best_utility = utility
                 best_move = move
 
-        print('choose based on utility')
+        debug_print('choose based on utility')
         return best_move
 
         # if pollution is increasing and DO2 is decreasing the agent will return the previous action otherwise random.
@@ -197,9 +201,9 @@ class Agent:
     def reset(self):
         # todo once total steps are normalized in the project.py reset to random positions
         self.epsilon *= self.epsilon_decay
-        self.x = 0
-        self.y = 0
-        self.z = 0
+        self.x = random.randint(0, self.width-1)
+        self.y = random.randint(0, self.height-1)
+        self.z = random.randint(0, self.depth-1)
         self.experiences.clear()
 
     # def reward(self, environment):
@@ -210,7 +214,9 @@ class Agent:
 
     # Pollution reward
     def reward(self, environment):
-        return environment.get_pollution(self.x, self.y, self.z)
+        if environment.get_pollution(self.x, self.y, self.z) == Environment.SOURCE:
+            return 100
+        return 0
 
     def act(self, action, environment: Environment):
         # allows agent to know action and status of prior environment

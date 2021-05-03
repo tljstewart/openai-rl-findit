@@ -4,6 +4,7 @@
 # cells contain percentage 0-100 pollution
 import random
 import numpy as np
+import time
 
 from environment import Environment
 from agent import Agent
@@ -96,7 +97,7 @@ def program(environment, agent, plot):
     i = 0
 
     # sets "lifetime" of agent in world render environment
-    for i in range(100):
+    for i in range(1000):
         # plot.render_agent(agent, old=True, pause=0)
 
         # outputs data as a comma separated array
@@ -115,8 +116,8 @@ def program(environment, agent, plot):
         # print(score)
         # -- End Step
 
-        plot.render_pollution_grid(environment.pollution_data)
-        plot.render_agent(agent)
+        # plot.render_pollution_grid(environment.pollution_data)
+        # plot.render_agent(agent)
     return compute_performance(cost), i
 
 
@@ -128,29 +129,33 @@ if __name__ == "__main__":
     depth = 11
 
     plot = PlotUtil(width, height, depth)
-    water = generate_environment(width, height, depth, 2, 2, 2, 1/11, 0.0)
+    water = generate_environment(width, height, depth, 5, 5, 5, 1/11, 0.0)
     bob = Agent(1, 1, 1, width, height, depth)
 
     # render the pollution grid in 3D
-    plot.render_pollution_grid(water.pollution_data)
+    # plot.render_pollution_grid(water.pollution_data)
 
-    for run_index in range(15):
-        # log_name = current_time = time.strftime("%Y%m%d-%H%M%S", time.gmtime()) + '-' + str(run_index)
-        # create_log(log_name)
+    log_name = current_time = time.strftime("%Y%m%d-%H%M%S", time.gmtime()) + '- 11x11 @ 5x5, deterministic'
+    create_log(log_name)
 
-        perf_1, total_step = program(water, bob, plot)
+    for run_index in range(2500):
+        print("Finished run %s" % (run_index, ))
+        distance_to_source = bob.distance_to(water.goal)
+
+        perf, total_step = program(water, bob, plot)
         bob.update_utilities()
-        plot.render_utility(bob.utility_table)
+        # plot.render_utility(bob.utility_table)
+
         bob.reset()
         # todo: store each trial initial optimal distance and total number of steps to normalize
-        # print(run_index, total_step)
+        # print(run_index, total_step, distance_to_source, total_step / distance_to_source)
 
-        performance_measure.append(perf_1)
+        performance_measure.append(perf)
         # prints to csv size, source location, distance, gradient, noise, steps and performance
-        # file_print([50, 50, 25, 1/25, 0, total_step, perf_1])
+        file_print([run_index, total_step, distance_to_source, (total_step + 1) / (distance_to_source + 1)])
         # bob.print_utilities()
 
-    plot.render_utility(bob.utility_table, stop=True)
+    # plot.render_utility(bob.utility_table, stop=True)
 
     # performance_measure.append(program(0, generate_environment(10, 7), reflex_agent()));
 

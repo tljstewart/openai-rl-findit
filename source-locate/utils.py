@@ -1,13 +1,12 @@
-import time
 
-DEBUG = True
+DEBUG = False
 
 file = None
 
 
 def create_log(name):
     global file
-    file = open('data/3/test/' + name + '-data.csv', 'w')
+    file = open('data/perf/size/' + name + '-data.csv', 'w')
 
 
 def file_print(data):
