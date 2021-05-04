@@ -124,35 +124,35 @@ def program(environment, agent, plot):
 if __name__ == "__main__":
     # env = generate_environment(20, 10, 0.35)
     # print(env)
-    width = 11
-    height = 11
-    depth = 11
+    width = 21
+    height = 21
+    depth = 21
 
     plot = PlotUtil(width, height, depth)
-    water = generate_environment(width, height, depth, 5, 5, 5, 1/11, 0.0)
+    water = generate_environment(width, height, depth, 10, 10, 10, 1/21, 0.0)
     bob = Agent(1, 1, 1, width, height, depth)
 
     # render the pollution grid in 3D
     # plot.render_pollution_grid(water.pollution_data)
 
-    log_name = current_time = time.strftime("%Y%m%d-%H%M%S", time.gmtime()) + '- 11x11 @ 5x5, deterministic'
+    log_name = current_time = time.strftime("%Y%m%d-%H%M%S", time.gmtime()) + '- 20x20 @ 10x10, deterministic'
     create_log(log_name)
 
     for run_index in range(2500):
         print("Finished run %s" % (run_index, ))
         distance_to_source = bob.distance_to(water.goal)
+        epsilon = bob.epsilon
 
         perf, total_step = program(water, bob, plot)
         bob.update_utilities()
         # plot.render_utility(bob.utility_table)
 
         bob.reset()
-        # todo: store each trial initial optimal distance and total number of steps to normalize
         # print(run_index, total_step, distance_to_source, total_step / distance_to_source)
 
         performance_measure.append(perf)
         # prints to csv size, source location, distance, gradient, noise, steps and performance
-        file_print([run_index, total_step, distance_to_source, (total_step + 1) / (distance_to_source + 1)])
+        file_print([run_index, epsilon, total_step, distance_to_source, (total_step + 1) / (distance_to_source + 1)])
         # bob.print_utilities()
 
     # plot.render_utility(bob.utility_table, stop=True)
